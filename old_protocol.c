@@ -1694,9 +1694,11 @@ static int last_power=0;
         if(band_get_current()==band6) {
           output_buffer[C3]=output_buffer[C3]|0x40; // Alex 6M low noise amplifier
         }
+/*
         if(band->disablePA) {
           output_buffer[C3]=output_buffer[C3]|0x80; // disable PA
         }
+*/
 #ifdef PURESIGNAL
 	//
 	// If using PURESIGNAL and a feedback to EXT1, we have to manually activate the RX HPF/BPF

@@ -50,8 +50,6 @@
 #include "client_server.h"
 #endif
 
-int function=0;
-
 static int width;
 static int height;
 
@@ -61,14 +59,28 @@ static GtkWidget *toolbar;
 static GtkWidget *last_dialog;
 
 static GtkWidget *sim_mox;
-static GtkWidget *sim_s1;
-static GtkWidget *sim_s2;
-static GtkWidget *sim_s3;
-static GtkWidget *sim_s4;
-static GtkWidget *sim_s5;
-static GtkWidget *sim_s6;
-static GtkWidget *sim_function;
-
+static GtkWidget *sim_band;
+static GtkWidget *sim_mode;
+static GtkWidget *sim_filter;
+static GtkWidget *sim_noise;
+static GtkWidget *sim_agc;
+static GtkWidget *sim_bstack;
+static GtkWidget *sim_ctun;
+static GtkWidget *sim_mem;
+static GtkWidget *sim_freq;
+static GtkWidget *sim_rit;
+static GtkWidget *sim_rit_inc;
+static GtkWidget *sim_rit_dec;
+static GtkWidget *sim_rit_cl;
+static GtkWidget *sim_sat;
+static GtkWidget *sim_rsat;
+static GtkWidget *sim_tune;
+static GtkWidget *sim_lock;
+static GtkWidget *sim_split;
+static GtkWidget *sim_atob;
+static GtkWidget *sim_btoa;
+static GtkWidget *sim_aswapb;
+static GtkWidget *sim_duplex;
 
 static GtkWidget *last_band;
 static GtkWidget *last_bandstack;
@@ -101,124 +113,6 @@ static gboolean xit_timer_cb(gpointer data) {
   return TRUE;
 }
 
-void update_toolbar_labels() {
-  switch(function) {
-    case 0:
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"Mox");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"");
-      }
-      gtk_button_set_label(GTK_BUTTON(sim_s1),"Band");
-      gtk_button_set_label(GTK_BUTTON(sim_s2),"BStack");
-      gtk_button_set_label(GTK_BUTTON(sim_s3),"Mode");
-      gtk_button_set_label(GTK_BUTTON(sim_s4),"Filter");
-      gtk_button_set_label(GTK_BUTTON(sim_s5),"Noise");
-      gtk_button_set_label(GTK_BUTTON(sim_s6),"AGC");
-      set_button_text_color(sim_s1,"black");
-      set_button_text_color(sim_s2,"black");
-      break;
-    case 1:
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"Mox");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"");
-      }
-      gtk_button_set_label(GTK_BUTTON(sim_s1),"Lock");
-      gtk_button_set_label(GTK_BUTTON(sim_s2),"CTUN");
-      gtk_button_set_label(GTK_BUTTON(sim_s3),"A>B");
-      gtk_button_set_label(GTK_BUTTON(sim_s4),"A<B");
-      gtk_button_set_label(GTK_BUTTON(sim_s5),"A<>B");
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_s6),"Split");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_s6),"");
-      }
-      break;
-    case 2:
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"Mox");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"");
-      }
-      gtk_button_set_label(GTK_BUTTON(sim_s1),"Freq");
-      gtk_button_set_label(GTK_BUTTON(sim_s2),"Mem");
-      gtk_button_set_label(GTK_BUTTON(sim_s3),"RIT");
-      gtk_button_set_label(GTK_BUTTON(sim_s4),"RIT+");
-      gtk_button_set_label(GTK_BUTTON(sim_s5),"RIT-");
-      gtk_button_set_label(GTK_BUTTON(sim_s6),"RIT CL");
-      break;
-    case 3:
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"Mox");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"");
-      }
-      gtk_button_set_label(GTK_BUTTON(sim_s1),"Freq");
-      gtk_button_set_label(GTK_BUTTON(sim_s2),"Mem");
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_s3),"XIT");
-        gtk_button_set_label(GTK_BUTTON(sim_s4),"XIT+");
-        gtk_button_set_label(GTK_BUTTON(sim_s5),"XIT-");
-        gtk_button_set_label(GTK_BUTTON(sim_s6),"XIT CL");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_s3),"");
-        gtk_button_set_label(GTK_BUTTON(sim_s4),"");
-        gtk_button_set_label(GTK_BUTTON(sim_s5),"");
-        gtk_button_set_label(GTK_BUTTON(sim_s6),"");
-      }
-      break;
-    case 4:
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"Mox");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"");
-      }
-      gtk_button_set_label(GTK_BUTTON(sim_s1),"Freq");
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_s2),"Split");
-        gtk_button_set_label(GTK_BUTTON(sim_s3),"Duplex");
-        gtk_button_set_label(GTK_BUTTON(sim_s4),"SAT");
-        gtk_button_set_label(GTK_BUTTON(sim_s5),"RSAT");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_s2),"");
-        gtk_button_set_label(GTK_BUTTON(sim_s3),"");
-        gtk_button_set_label(GTK_BUTTON(sim_s4),"");
-        gtk_button_set_label(GTK_BUTTON(sim_s5),"");
-      }
-      gtk_button_set_label(GTK_BUTTON(sim_s6),"");
-      break;
-    case 5:
-      if(can_transmit) {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"Tune");
-        if(OCtune!=0 && OCfull_tune_time!=0) {
-          gtk_button_set_label(GTK_BUTTON(sim_s1),"Full");
-        } else {
-          gtk_button_set_label(GTK_BUTTON(sim_s1),"");
-        }
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_mox),"");
-        gtk_button_set_label(GTK_BUTTON(sim_s1),"");
-      }
-      if(OCtune!=0 && OCmemory_tune_time!=0) {
-        gtk_button_set_label(GTK_BUTTON(sim_s2),"Memory");
-      } else {
-        gtk_button_set_label(GTK_BUTTON(sim_s2),"");
-      }
-      gtk_button_set_label(GTK_BUTTON(sim_s3),"Band");
-      gtk_button_set_label(GTK_BUTTON(sim_s4),"Mode");
-      gtk_button_set_label(GTK_BUTTON(sim_s5),"Filter");
-      gtk_button_set_label(GTK_BUTTON(sim_s6),"");
-      if(full_tune) {
-        set_button_text_color(sim_s1,"red");
-      }
-      if(memory_tune) {
-        set_button_text_color(sim_s2,"red");
-      }
-      break;
-  }
-}
-
 static void close_cb(GtkWidget *widget, gpointer data) {
   gtk_widget_destroy(last_dialog);
   last_dialog=NULL;
@@ -248,7 +142,7 @@ void noise_cb(GtkWidget *widget, gpointer data) {
   start_noise();
 }
 
-void ctun_cb (GtkWidget *widget, gpointer data) {
+void ctun_cb(GtkWidget *widget, gpointer data) {
   int id=active_receiver->id;
 #ifdef CLIENT_SERVER
   if(radio_is_remote) {
@@ -481,12 +375,6 @@ static void yes_cb(GtkWidget *widget, gpointer data) {
   _exit(0);
 }
 
-static void halt_cb(GtkWidget *widget, gpointer data) {
-  stop();
-  int rc=system("shutdown -h -P now");
-  _exit(0);
-}
-
 static void exit_cb(GtkWidget *widget, gpointer data) {
 
   radioSaveState();
@@ -509,12 +397,6 @@ static void exit_cb(GtkWidget *widget, gpointer data) {
   gtk_widget_show(b_yes);
   gtk_grid_attach(GTK_GRID(grid),b_yes,0,1,1,1);
   g_signal_connect(b_yes,"pressed",G_CALLBACK(yes_cb),NULL);
-
-  GtkWidget *b_halt=gtk_button_new_with_label("Halt System");
-  //gtk_widget_override_font(b_halt, pango_font_description_from_string("Arial 18"));
-  gtk_widget_show(b_halt);
-  gtk_grid_attach(GTK_GRID(grid),b_halt,2,1,1,1);
-  g_signal_connect(b_halt,"pressed",G_CALLBACK(halt_cb),NULL);
 
   gtk_container_add(GTK_CONTAINER(content),grid);
   GtkWidget *close_button=gtk_dialog_add_button(GTK_DIALOG(dialog),"Cancel",GTK_RESPONSE_OK);
@@ -606,306 +488,34 @@ void tune_update(int state) {
   g_idle_add(ext_vfo_update,NULL);
 }
 
-void sim_s1_pressed_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      band_cb(widget,data);
-      break;
-    case 1:
-      lock_cb(widget,data);
-      break;
-    case 2:
-      freq_cb(widget,data);
-      break;
-    case 3:
-      freq_cb(widget,data);
-      break;
-    case 4:
-      freq_cb(widget,data);
-      break;
-    case 5:
-      full_tune=full_tune==1?0:1;
-      if(full_tune) {
-        set_button_text_color(sim_s2,"black");
-        set_button_text_color(sim_s1,"red");
-      } else {
-        set_button_text_color(sim_s1,"black");
-      }
-      break;
+
+void noop_released_cb(GtkWidget *widget, gpointer data) {
+}
+
+void sim_rit_inc_pressed_cb(GtkWidget *widget, gpointer data) {
+  if(rit_minus_timer==-1 && rit_plus_timer==-1) {
+    rit_cb(widget,(void *)1);
   }
 }
 
-void sim_s1_released_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
+void sim_rit_inc_released_cb(GtkWidget *widget, gpointer data) {
+  if(rit_plus_timer!=-1) {
+    g_source_remove(rit_plus_timer);
+    rit_plus_timer=-1;
   }
 }
 
-void sim_s2_pressed_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      bandstack_cb(widget,data);
-      break;
-    case 1:
-      ctun_cb(widget,data);
-      break;
-    case 2:
-      mem_cb(widget,data);
-      break;
-    case 3:
-      mem_cb(widget,data);
-      break;
-    case 4:
-      split_cb(widget,data);
-      break;
-    case 5:
-      memory_tune=memory_tune==1?0:1;
-      if(memory_tune) {
-        set_button_text_color(sim_s1,"black");
-        set_button_text_color(sim_s2,"red");
-      } else {
-        set_button_text_color(sim_s2,"black");
-      }
-      break;
+void sim_rit_dec_pressed_cb(GtkWidget *widget, gpointer data) {
+  if(rit_minus_timer==-1 && rit_plus_timer==-1) {
+    rit_cb(widget,(void *)-1);
   }
 }
 
-void sim_s2_released_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
+void sim_rit_dec_released_cb(GtkWidget *widget, gpointer data) {
+  if(rit_minus_timer!=-1) {
+    g_source_remove(rit_minus_timer);
+    rit_minus_timer=-1;
   }
-}
-
-
-void sim_s3_pressed_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      mode_cb(widget,data);
-      break;
-    case 1:
-      // A>B
-      atob_cb(widget,data);
-      break;
-    case 2:
-      rit_enable_cb(widget,data);
-      break;
-    case 3:
-      xit_enable_cb(widget,data);
-      break;
-    case 4:
-      duplex_cb(widget,data);
-      break;
-    case 5:
-      band_cb(widget,data);
-      break;
-  }
-}
-
-void sim_s3_released_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-  }
-}
-
-void sim_s4_pressed_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      filter_cb(widget,data);
-      break;
-    case 1:
-      // A<B
-      btoa_cb(widget,data);
-      break;
-    case 2:
-      if(rit_minus_timer==-1 && rit_plus_timer==-1) {
-        rit_cb(widget,(void *)1);
-      }
-      break;
-    case 3:
-      if(xit_minus_timer==-1 && xit_plus_timer==-1) {
-        xit_cb(widget,(void *)1);
-      }
-      break;
-    case 4:
-      sat_cb(widget,data);
-      break;
-    case 5:
-      mode_cb(widget,data);
-      break;
-  }
-}
-
-void sim_s4_released_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      break;
-    case 1:
-      break;
-    case 2:
-      if(rit_plus_timer!=-1) {
-        g_source_remove(rit_plus_timer);
-        rit_plus_timer=-1;
-      }
-      break;
-    case 3:
-      if(xit_plus_timer!=-1) {
-        g_source_remove(xit_plus_timer);
-        xit_plus_timer=-1;
-      }
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-  }
-}
-
-void sim_s5_pressed_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      noise_cb(widget,data);
-      break;
-    case 1:
-      // A<>B
-      aswapb_cb(widget,data);
-      break;
-    case 2:
-      if(rit_minus_timer==-1 && rit_plus_timer==-1) {
-        rit_cb(widget,(void *)-1);
-      }
-      break;
-    case 3:
-      if(xit_minus_timer==-1 && xit_plus_timer==-1) {
-        xit_cb(widget,(void *)-1);
-      }
-      break;
-    case 4:
-      rsat_cb(widget,data);
-      break;
-    case 5:
-      filter_cb(widget,data);
-      break;
-  }
-}
-
-void sim_s5_released_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      break;
-    case 1:
-      break;
-    case 2:
-      if(rit_minus_timer!=-1) {
-        g_source_remove(rit_minus_timer);
-        rit_minus_timer=-1;
-      }
-      break;
-    case 3:
-      if(xit_minus_timer!=-1) {
-        g_source_remove(xit_minus_timer);
-        xit_minus_timer=-1;
-      }
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-  }
-}
-
-void sim_s6_pressed_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      agc_cb(widget,data);
-      break;
-    case 1:
-      split_cb(widget,data);
-      break;
-    case 2:
-      rit_clear_cb(widget,NULL);
-      break;
-    case 3:
-      xit_clear_cb(widget,NULL);
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-  }
-}
-
-void sim_s6_released_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-  }
-}
-
-void sim_mox_cb(GtkWidget *widget, gpointer data) {
-  switch(function) {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      mox_cb((GtkWidget *)NULL, (gpointer)NULL);
-      break;
-    case 5:
-      tune_cb((GtkWidget *)NULL, (gpointer)NULL);
-      break;
-  }
-}
-
-void sim_function_cb(GtkWidget *widget, gpointer data) {
-  function++;
-  if(function>MAX_FUNCTION) {
-    function=0;
-  }
-  update_toolbar_labels();
-  g_idle_add(ext_vfo_update,NULL);
 }
 
 GtkWidget *toolbar_init(int my_width, int my_height, GtkWidget* parent) {
@@ -931,59 +541,136 @@ GtkWidget *toolbar_init(int my_width, int my_height, GtkWidget* parent) {
     gtk_widget_set_size_request (toolbar, width, height);
     gtk_grid_set_column_homogeneous(GTK_GRID(toolbar),TRUE);
 
-    if(can_transmit) {
-      sim_mox=gtk_button_new_with_label("Mox");
-    } else {
-      sim_mox=gtk_button_new_with_label("");
-    }
-    //gtk_widget_override_font(sim_mox, pango_font_description_from_string("Sans 11"));
-    g_signal_connect(G_OBJECT(sim_mox),"clicked",G_CALLBACK(sim_mox_cb),NULL);
+    // 1st row
+    sim_mox=gtk_button_new_with_label("Mox");
+    g_signal_connect(G_OBJECT(sim_mox),"clicked",G_CALLBACK(mox_cb),NULL);
     gtk_grid_attach(GTK_GRID(toolbar),sim_mox,0,0,4,1);
 
-    sim_s1=gtk_button_new_with_label("Band");
-    gtk_widget_set_size_request (sim_s1, button_width, 0);
-    //gtk_widget_override_font(sim_s1, pango_font_description_from_string("Sans 11"));
-    g_signal_connect(G_OBJECT(sim_s1),"pressed",G_CALLBACK(sim_s1_pressed_cb),NULL);
-    g_signal_connect(G_OBJECT(sim_s1),"released",G_CALLBACK(sim_s1_released_cb),NULL);
-    gtk_grid_attach(GTK_GRID(toolbar),sim_s1,4,0,4,1);
+    sim_band=gtk_button_new_with_label("Band");
+    //gtk_widget_set_size_request (sim_band, button_width, 0);
+    g_signal_connect(G_OBJECT(sim_band),"pressed",G_CALLBACK(band_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_band),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_band,4,0,4,1);
 
-    sim_s2=gtk_button_new_with_label("BStack");
-    gtk_widget_set_size_request (sim_s2, button_width, 0);
-    //gtk_widget_override_font(sim_s2, pango_font_description_from_string("Sans 11"));
-    g_signal_connect(G_OBJECT(sim_s2),"pressed",G_CALLBACK(sim_s2_pressed_cb),NULL);
-    g_signal_connect(G_OBJECT(sim_s2),"released",G_CALLBACK(sim_s2_released_cb),NULL);
-    gtk_grid_attach(GTK_GRID(toolbar),sim_s2,8,0,4,1);
+    sim_mode=gtk_button_new_with_label("Mode");
+    g_signal_connect(G_OBJECT(sim_mode),"pressed",G_CALLBACK(mode_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_mode),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_mode,8,0,4,1);
 
-    sim_s3=gtk_button_new_with_label("Mode");
-    //gtk_widget_override_font(sim_s3, pango_font_description_from_string("Sans 11"));
-    g_signal_connect(G_OBJECT(sim_s3),"pressed",G_CALLBACK(sim_s3_pressed_cb),NULL);
-    g_signal_connect(G_OBJECT(sim_s3),"released",G_CALLBACK(sim_s3_released_cb),NULL);
-    gtk_grid_attach(GTK_GRID(toolbar),sim_s3,12,0,4,1);
+    sim_filter=gtk_button_new_with_label("Filter");
+    g_signal_connect(G_OBJECT(sim_filter),"pressed",G_CALLBACK(filter_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_filter),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_filter,12,0,4,1);
 
-    sim_s4=gtk_button_new_with_label("Filter");
-    //gtk_widget_override_font(sim_s4, pango_font_description_from_string("Sans 11"));
-    g_signal_connect(G_OBJECT(sim_s4),"pressed",G_CALLBACK(sim_s4_pressed_cb),NULL);
-    g_signal_connect(G_OBJECT(sim_s4),"released",G_CALLBACK(sim_s4_released_cb),NULL);
-    gtk_grid_attach(GTK_GRID(toolbar),sim_s4,16,0,4,1);
+    sim_noise=gtk_button_new_with_label("Noise");
+    g_signal_connect(G_OBJECT(sim_noise),"pressed",G_CALLBACK(noise_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_noise),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_noise,16,0,4,1);
 
-    sim_s5=gtk_button_new_with_label("Noise");
-    //gtk_widget_override_font(sim_s5, pango_font_description_from_string("Sans 11"));
-    g_signal_connect(G_OBJECT(sim_s5),"pressed",G_CALLBACK(sim_s5_pressed_cb),NULL);
-    g_signal_connect(G_OBJECT(sim_s5),"released",G_CALLBACK(sim_s5_released_cb),NULL);
-    gtk_grid_attach(GTK_GRID(toolbar),sim_s5,20,0,4,1);
+    sim_agc=gtk_button_new_with_label("AGC");
+    g_signal_connect(G_OBJECT(sim_agc),"pressed",G_CALLBACK(agc_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_agc),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_agc,20,0,4,1);
 
-    sim_s6=gtk_button_new_with_label("AGC");
-    //gtk_widget_override_font(sim_s6, pango_font_description_from_string("Sans 11"));
-    g_signal_connect(G_OBJECT(sim_s6),"pressed",G_CALLBACK(sim_s6_pressed_cb),NULL);
-    g_signal_connect(G_OBJECT(sim_s6),"released",G_CALLBACK(sim_s6_released_cb),NULL);
-    gtk_grid_attach(GTK_GRID(toolbar),sim_s6,24,0,4,1);
+    sim_bstack=gtk_button_new_with_label("BStack");
+    g_signal_connect(G_OBJECT(sim_bstack),"pressed",G_CALLBACK(bandstack_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_bstack),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_bstack,24,0,4,1);
 
-    sim_function=gtk_button_new_with_label("Function");
-    //gtk_widget_override_font(sim_function, pango_font_description_from_string("Sans 11"));
-    g_signal_connect(G_OBJECT(sim_function),"clicked",G_CALLBACK(sim_function_cb),NULL);
-    gtk_grid_attach(GTK_GRID(toolbar),sim_function,28,0,4,1);
+    sim_ctun=gtk_button_new_with_label("CTUN");
+    g_signal_connect(G_OBJECT(sim_ctun),"pressed",G_CALLBACK(ctun_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_ctun),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_ctun,28,0,4,1);
 
-    //update_toolbar_labels();
+    // 2nd row
+    sim_mem=gtk_button_new_with_label("Mem");
+    g_signal_connect(G_OBJECT(sim_mem),"pressed",G_CALLBACK(mem_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_mem),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_mem,0,1,4,1);
+
+    sim_freq=gtk_button_new_with_label("Freq");
+    g_signal_connect(G_OBJECT(sim_freq),"pressed",G_CALLBACK(freq_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_freq),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_freq,4,1,4,1);
+
+    sim_rit=gtk_button_new_with_label("RIT");
+    g_signal_connect(G_OBJECT(sim_rit),"pressed",G_CALLBACK(rit_enable_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_rit),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_rit,8,1,4,1);
+
+    sim_rit_inc=gtk_button_new_with_label("RIT+");
+    g_signal_connect(G_OBJECT(sim_rit_inc),"pressed",G_CALLBACK(sim_rit_inc_pressed_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_rit_inc),"released",G_CALLBACK(sim_rit_inc_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_rit_inc,12,1,4,1);
+
+    sim_rit_dec=gtk_button_new_with_label("RIT-");
+    g_signal_connect(G_OBJECT(sim_rit_dec),"pressed",G_CALLBACK(sim_rit_dec_pressed_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_rit_dec),"released",G_CALLBACK(sim_rit_dec_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_rit_dec,16,1,4,1);
+
+    sim_rit_cl=gtk_button_new_with_label("RIT CL");
+    g_signal_connect(G_OBJECT(sim_rit_cl),"pressed",G_CALLBACK(rit_clear_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_rit_cl),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_rit_cl,20,1,4,1);
+
+    sim_sat=gtk_button_new_with_label("SAT");
+    g_signal_connect(G_OBJECT(sim_sat),"pressed",G_CALLBACK(sat_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_sat),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_sat,24,1,4,1);
+
+    sim_rsat=gtk_button_new_with_label("RSAT");
+    g_signal_connect(G_OBJECT(sim_rsat),"pressed",G_CALLBACK(rsat_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_rsat),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_rsat,28,1,4,1);
+
+    // 3rd row
+    sim_tune=gtk_button_new_with_label("Tune");
+    g_signal_connect(G_OBJECT(sim_tune),"pressed",G_CALLBACK(tune_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_tune),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_tune,0,2,4,1);
+
+    sim_lock=gtk_button_new_with_label("Lock");
+    g_signal_connect(G_OBJECT(sim_lock),"pressed",G_CALLBACK(lock_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_lock),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_lock,4,2,4,1);
+
+    sim_split=gtk_button_new_with_label("Split");
+    g_signal_connect(G_OBJECT(sim_split),"pressed",G_CALLBACK(split_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_split),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_split,8,2,4,1);
+
+    sim_atob=gtk_button_new_with_label("A > B");
+    g_signal_connect(G_OBJECT(sim_atob),"pressed",G_CALLBACK(atob_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_atob),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_atob,12,2,4,1);
+
+    sim_btoa=gtk_button_new_with_label("A < B");
+    g_signal_connect(G_OBJECT(sim_btoa),"pressed",G_CALLBACK(btoa_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_btoa),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_btoa,16,2,4,1);
+
+    sim_aswapb=gtk_button_new_with_label("A<>B");
+    g_signal_connect(G_OBJECT(sim_aswapb),"pressed",G_CALLBACK(aswapb_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_aswapb),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_aswapb,20,2,4,1);
+
+    sim_duplex=gtk_button_new_with_label("Duplex");
+    g_signal_connect(G_OBJECT(sim_duplex),"pressed",G_CALLBACK(duplex_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_duplex),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_duplex,24,2,4,1);
+
+/*
+    sim_noise=gtk_button_new_with_label("Noise");
+    g_signal_connect(G_OBJECT(sim_noise),"pressed",G_CALLBACK(noise_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_noise),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_noise,20,0,4,1);
+
+    sim_agc=gtk_button_new_with_label("AGC");
+    g_signal_connect(G_OBJECT(sim_agc),"pressed",G_CALLBACK(agc_cb),NULL);
+    g_signal_connect(G_OBJECT(sim_agc),"released",G_CALLBACK(noop_released_cb),NULL);
+    gtk_grid_attach(GTK_GRID(toolbar),sim_agc,24,0,4,1);
+*/
+
 
     last_dialog=NULL;
 

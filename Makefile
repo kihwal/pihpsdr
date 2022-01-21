@@ -3,13 +3,13 @@ GIT_DATE := $(firstword $(shell git --no-pager show --date=short --format="%ai" 
 GIT_VERSION := $(shell git describe --abbrev=0 --tags)
 
 # uncomment the line below to include GPIO (For original piHPSDR Controller and Controller2 with i2c)
-GPIO_INCLUDE=GPIO
+#GPIO_INCLUDE=GPIO
 
 # uncomment the line below to include USB Ozy support
 # USBOZY_INCLUDE=USBOZY
 
 # uncomment the line below to include Pure Signal support
-PURESIGNAL_INCLUDE=PURESIGNAL
+#PURESIGNAL_INCLUDE=PURESIGNAL
 
 # uncomment the line to below include support local CW keyer
 #LOCALCW_INCLUDE=LOCALCW

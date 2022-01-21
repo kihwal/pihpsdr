@@ -641,11 +641,6 @@ int ext_sat_update(void *data) {
 }
 
 int ext_function_update(void *data) {
-  function++;
-  if(function>MAX_FUNCTION) {
-    function=0;
-  }
-  update_toolbar_labels();
   g_idle_add(ext_vfo_update, NULL);
   return 0;
 }

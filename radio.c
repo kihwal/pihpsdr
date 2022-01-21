@@ -93,7 +93,7 @@ void MIDIstartup();
 #define PANADAPTER_HEIGHT (105)
 #define ZOOMPAN_HEIGHT (50)
 #define SLIDERS_HEIGHT (100)
-#define TOOLBAR_HEIGHT (30)
+#define TOOLBAR_HEIGHT (90)
 #define WATERFALL_HEIGHT (105)
 
 GtkWidget *fixed;
