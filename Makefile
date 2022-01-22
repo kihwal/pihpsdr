@@ -9,7 +9,7 @@ GIT_VERSION := $(shell git describe --abbrev=0 --tags)
 # USBOZY_INCLUDE=USBOZY
 
 # uncomment the line below to include Pure Signal support
-#PURESIGNAL_INCLUDE=PURESIGNAL
+PURESIGNAL_INCLUDE=PURESIGNAL
 
 # uncomment the line to below include support local CW keyer
 #LOCALCW_INCLUDE=LOCALCW
