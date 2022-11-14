@@ -249,10 +249,12 @@ void discovery() {
   }
 #endif
 
+/*
   if(enable_protocol_1) {
     status_text("Protocol 1 ... Discovering Devices");
     old_discovery();
   }
+*/
 
   if(enable_protocol_2 && !discover_only_p1) {
     status_text("Protocol 2 ... Discovering Devices");

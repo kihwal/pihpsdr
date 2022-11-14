@@ -135,7 +135,7 @@ static gboolean reboot_cb (GtkWidget *widget, GdkEventButton *event, gpointer da
 #endif
   }
   radioSaveState();
-  int rc=system("reboot");
+//  int rc=system("reboot");
   _exit(0);
 }
 
@@ -157,7 +157,7 @@ static gboolean shutdown_cb (GtkWidget *widget, GdkEventButton *event, gpointer 
 #endif
   }
   radioSaveState();
-  int rc=system("shutdown -h -P now");
+//  int rc=system("shutdown -h -P now");
   _exit(0);
 }
 
@@ -208,7 +208,7 @@ void exit_menu(GtkWidget *parent) {
   gtk_grid_attach(GTK_GRID(grid),exit_b,col,row,1,1);
 
   col++;
-
+/*
   GtkWidget *reboot_b=gtk_button_new_with_label("Reboot");
   g_signal_connect (reboot_b, "pressed", G_CALLBACK(reboot_cb), NULL);
   gtk_grid_attach(GTK_GRID(grid),reboot_b,col,row,1,1);
@@ -218,7 +218,7 @@ void exit_menu(GtkWidget *parent) {
   GtkWidget *shutdown_b=gtk_button_new_with_label("Shutdown");
   g_signal_connect (shutdown_b, "pressed", G_CALLBACK(shutdown_cb), NULL);
   gtk_grid_attach(GTK_GRID(grid),shutdown_b,col,row,1,1);
-
+*/
   gtk_container_add(GTK_CONTAINER(content),grid);
 
   sub_menu=dialog;
